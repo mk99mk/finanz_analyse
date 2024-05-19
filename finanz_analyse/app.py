@@ -3,6 +3,7 @@ from pathlib import Path
 import datetime
 import pandas as pd
 import copy
+import functools
 
 from finanz_analyse.load import checking
 from finanz_analyse.ui import chart_generation
@@ -12,18 +13,21 @@ def main():
     pn.extension()
     pn.extension('bokeh')
 
+    accounts = ['c24', 'c24_spari', 'volksbank']
 
-    tabs = chart_generation.checking_tab('c24')
+    pages = [chart_generation.checking_tab(name) for name in accounts]
 
-    template = pn.template.FastListTemplate(
-        title="Personal Finance Dashboard",
-        sidebar=[
-            pn.pane.Markdown("# Income Expense analysis"),
-            pn.pane.Markdown(
-                "Overview of income and expense based on my bank transactions. Categories are obtained using local LLMs."
-            ),
-        ],
-        main=[tabs],
-    )
+    main_content = pn.Row()
+    def switch_page(page, event):
+        main_content.clear()
+        main_content.append(page)
 
-    template.show()
+    page_buttons = [pn.widgets.Button(name=f'Checking account - {name}', button_type='primary') for name in accounts]
+    for page, page_button in zip(pages, page_buttons):
+        page_button.on_click(functools.partial(switch_page, page))
+
+    dashboard = pn.Row(pn.Column(*page_buttons), pn.Spacer(width=50), main_content)
+
+    main_content.append(pages[0])
+
+    dashboard.show()

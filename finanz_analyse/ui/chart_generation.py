@@ -10,20 +10,27 @@ import pandas as pd
 from bokeh.plotting import figure
 from bokeh.models import ColumnDataSource
 from bokeh.models.tools import HoverTool
+from bokeh.models import tools
+from bokeh.models import Range1d
+
 
 def create_balance_plot(df: pd.DataFrame):
     source = ColumnDataSource(df)
     p = figure(title="Account Balance Over Time", x_axis_label='Date', y_axis_label='Balance',
-               x_axis_type='datetime', width=1000, height=400)
+               x_axis_type='datetime', width=1000, height=400, tools="")
     p.line(x='date', y='balance', source=source, line_width=2, color='blue', legend_label='Balance')
-    p.circle(x='date', y='balance', source=source, size=5, color='blue')
+    p.scatter(x='date', y='balance', source=source, size=5, color='blue')
 
+    wheel_zoom = tools.WheelZoomTool()
+    wheel_zoom.dimensions = 'height'
+    pan_tool = tools.PanTool()
+    pan_tool.dimensions = 'height'
     hover = HoverTool()
     hover.tooltips = [("Date", "@date{%F}"), ("Balance", "@balance{0.2f}")]
     hover.formatters = {'@date': 'datetime'}
-    p.add_tools(hover)
-    p.legend.location = "top_left"
+    p.add_tools(wheel_zoom, pan_tool, hover)
 
+    p.legend.location = "top_left"
     return p
 
 def checking_tab(name: str):

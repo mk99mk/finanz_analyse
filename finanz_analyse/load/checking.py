@@ -1,5 +1,7 @@
 from pathlib import Path
 import dateutil
+import datetime
+import time
 import pandas as pd
 from io import StringIO
 from langchain_community.llms import Ollama
@@ -41,7 +43,7 @@ def identify_columns(sliced_data: pd.DataFrame, labels: list[str]):
 
 
 
-def load(name: str, path: Path):
+def add(name: str, path: Path):
     new_data = pd.read_csv(path)
     new_labels = new_data.columns
     with StringIO() as output:
@@ -65,5 +67,27 @@ def load(name: str, path: Path):
     full_data.drop_duplicates(subset=['date', 'amount', 'recipient'])
     full_data.to_csv(bank_file)
 
+def load(name: str):
+    bank_file = DATA / f"{name}.csv"
+    return pd.read_csv(bank_file)
 
+def sum(history: pd.DataFrame, start: datetime.date) -> pd.DataFrame:
+    stamp = int(time.mktime(start.timetuple()))
+    init_sum = history[history['date'] <= stamp]['amount'].sum()
+    stamps = [stamp]
+    sums = [init_sum]
+
+    today = datetime.date.today()
+    current = start
+    while current != today:
+        current += datetime.timedelta(days=1)
+        stamp = int(time.mktime(current.timetuple()))
+        stamps.append(stamp)
+        selected = history[history['date'] == stamp]
+        sums.append(selected['amount'].sum())
+    
+    sums_df = pd.Series(sums)
+    sums_df = sums_df.cumsum()
+    result = pd.DataFrame.from_dict({'date': pd.Series(stamps), 'sum': sums_df})
+    return result
 

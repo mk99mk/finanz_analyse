@@ -160,3 +160,4 @@ cython_debug/
 #.idea/
 
 finanz_analyse/data
+yfinance.cache

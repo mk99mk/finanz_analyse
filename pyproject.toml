@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "finanz_analyse"
+version = "0.1.0"
+description = ""
+authors = ["Michel Korfhage <korfhage.michel@web.de>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+yfinance = "^0.2.38"
+pandas = "^2.2.2"
+requests-cache = "^1.2.0"
+requests-ratelimiter = "^0.6.0"
+scipy = "^1.13.0"
+
+[tool.poetry.scripts]
+yfinance = "finanz_analyse.data_loader.finance_yahoo_adapter:main"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

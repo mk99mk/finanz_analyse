@@ -41,9 +41,7 @@ def identify_columns(sliced_data: pd.DataFrame, labels: list[str]):
             print("ERROR ", e)
             pass
 
-
-
-def add(name: str, path: Path):
+def add(name: str, path: Path, day_first: bool = True):
     new_data = pd.read_csv(path)
     new_labels = new_data.columns
     with StringIO() as output:
@@ -61,33 +59,17 @@ def add(name: str, path: Path):
         column_id.description: "description"
     }
     new_data = new_data.rename(columns=mapping)
-    new_data['date'] = new_data['date'].map(lambda v: int(dateutil.parser.parse(v).timestamp()))
+    new_data['date'] = new_data['date'].map(lambda v: dateutil.parser.parse(v, dayfirst=day_first))
     new_data['amount'] = new_data['amount'].map(lambda v: float(v.replace(',', '.')))
     full_data = pd.concat([data, new_data], join="inner")
     full_data.drop_duplicates(subset=['date', 'amount', 'recipient'])
+    full_data = full_data.reset_index(drop=True)
     full_data.to_csv(bank_file)
 
 def load(name: str):
     bank_file = DATA / f"{name}.csv"
-    return pd.read_csv(bank_file)
-
-def sum(history: pd.DataFrame, start: datetime.date) -> pd.DataFrame:
-    stamp = int(time.mktime(start.timetuple()))
-    init_sum = history[history['date'] <= stamp]['amount'].sum()
-    stamps = [stamp]
-    sums = [init_sum]
-
-    today = datetime.date.today()
-    current = start
-    while current != today:
-        current += datetime.timedelta(days=1)
-        stamp = int(time.mktime(current.timetuple()))
-        stamps.append(stamp)
-        selected = history[history['date'] == stamp]
-        sums.append(selected['amount'].sum())
-    
-    sums_df = pd.Series(sums)
-    sums_df = sums_df.cumsum()
-    result = pd.DataFrame.from_dict({'date': pd.Series(stamps), 'sum': sums_df})
-    return result
-
+    data = pd.read_csv(bank_file)
+    data['date'] = data['date'].map(lambda v: dateutil.parser.parse(v).date())
+    data = data.drop(columns=['Unnamed: 0'])
+    data = data.reset_index(drop=True)
+    return data

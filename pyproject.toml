@@ -12,10 +12,17 @@ pandas = "^2.2.2"
 requests-cache = "^1.2.0"
 requests-ratelimiter = "^0.6.0"
 scipy = "^1.13.0"
+plotly = "^5.22.0"
+panel = "^1.4.2"
+langchain-community = "^0.2.0"
 
 [tool.poetry.scripts]
+app = "finanz_analyse.app:main"
 yfinance = "finanz_analyse.data_loader.finance_yahoo_adapter:main"
 
+
+[tool.poetry.group.dev.dependencies]
+black = "^24.4.2"
 
 [build-system]
 requires = ["poetry-core"]

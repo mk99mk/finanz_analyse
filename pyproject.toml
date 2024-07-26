@@ -16,10 +16,12 @@ plotly = "^5.22.0"
 panel = "^1.4.2"
 langchain-community = "^0.2.0"
 bokeh = "^3.4.1"
+dash = "^2.17.1"
 
 [tool.poetry.scripts]
 app = "finanz_analyse.app:main"
 add = "finanz_analyse.add:main"
+test = "finanz_analyse.testing:main"
 yfinance = "finanz_analyse.data_loader.finance_yahoo_adapter:main"
 
 

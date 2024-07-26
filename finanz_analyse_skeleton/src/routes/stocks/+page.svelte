@@ -1,4 +1,7 @@
 <script>
+	import { sub_pages } from '$lib/Navigation.svelte';
+
+	$sub_pages = [{ href: '#', name: 'TradeRepublic' }];
 </script>
 
 <div class="container h-full mx-auto flex justify-center items-center">

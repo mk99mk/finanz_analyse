@@ -23,17 +23,19 @@ session = CachedLimiterSession(
     backend=SQLiteCache("yfinance.cache"),
 )
 
-hitories = {}
 
-
-def load_tickers(symbols: list[str]):
+def load_tickers(symbols: list[str]) -> dict[str, pd.DataFrame]:
     global session
     tickers = yf.Tickers(symbols, session=session)
     print(tickers.tickers)
+    securities = {}
     for symbol, ticker in tickers.tickers.items():
-        history = ticker.history(start="2015-01-01", interval="1d", repair=True)
-        hitories[symbol] = history
+        history = ticker.history(period="5y", interval="3mo", repair=True)
+        history2 = ticker.history(period="1d", repair=True)
+        securities[symbol] = pd.concat([history, history2])
+    return securities
 
 
 def main():
-    load_tickers(["AAPL", "EXW1.DE"])
+    secs = load_tickers(["AAPL", "EXW1.DE"])
+    print('secs ', secs)

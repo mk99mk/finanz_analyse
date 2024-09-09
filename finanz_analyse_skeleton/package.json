@@ -9,9 +9,11 @@
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
     "lint": "prettier --check . && eslint .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "generate-client": "openapi-ts --input http://127.0.0.1:5000/openapi.json --output ./src/client --client @hey-api/client-fetch"
   },
   "devDependencies": {
+    "@hey-api/openapi-ts": "^0.53.0",
     "@skeletonlabs/skeleton": "2.10.2",
     "@skeletonlabs/tw-plugin": "0.4.0",
     "@sveltejs/adapter-auto": "^3.0.0",
@@ -39,6 +41,7 @@
   "type": "module",
   "dependencies": {
     "@floating-ui/dom": "1.6.8",
-    "d3": "^7.9.0"
+    "d3": "^7.9.0",
+    "@hey-api/client-fetch": "^0.2.4"
   }
 }
